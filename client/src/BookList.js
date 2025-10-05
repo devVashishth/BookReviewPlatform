@@ -3,11 +3,13 @@ import AddBook from './AddBook';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
+const API_BASE = 'https://bookreviewplatform-3-5ccu.onrender.com';
+
 function BookList() {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/books')
+    axios.get(`${API_BASE}/api/books`)
       .then(res => setBooks(res.data))
       .catch(() => setBooks([]));
   }, []);

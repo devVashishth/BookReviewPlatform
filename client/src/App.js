@@ -4,6 +4,8 @@ import BookList from './BookList';
 import BookDetail from './BookDetail';
 import axios from 'axios';
 
+const API_BASE = 'https://bookreviewplatform-3-5ccu.onrender.com';
+
 function App() {
   const [view, setView] = useState('signup');
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -11,13 +13,13 @@ function App() {
   const [success, setSuccess] = useState('');
   const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-  // Login/Signup handlers (same as before)...
+  // Signup handler
   const handleSignup = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     try {
-      await axios.post('http://localhost:5000/api/auth/signup', form);
+      await axios.post(`${API_BASE}/api/auth/signup`, form);
       setSuccess("Signup successful! Please login.");
       setTimeout(() => setView('login'), 1000);
     } catch (err) {
@@ -25,12 +27,13 @@ function App() {
     }
   };
 
+  // Login handler
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     try {
-      let res = await axios.post('http://localhost:5000/api/auth/login', form);
+      let res = await axios.post(`${API_BASE}/api/auth/login`, form);
       localStorage.setItem('token', res.data.token);
       setToken(res.data.token);
       setSuccess("Login successful!");
@@ -48,7 +51,7 @@ function App() {
 
   return (
     <div>
-      {/* Show Auth Forms if not logged in */}
+      {/* Auth Forms if not logged in */}
       {view !== 'books' && (
         <>
           {/* SIGNUP FORM */}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
+const API_BASE = 'https://bookreviewplatform-3-5ccu.onrender.com';
+
 function BookDetail() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
@@ -13,41 +15,35 @@ function BookDetail() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    fetchBook();
-    fetchReviews();
+    fetchBook(); fetchReviews();
+    // eslint-disable-next-line
   }, [id]);
 
   const fetchBook = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/books/${id}`);
-      setBook(res.data);
-      setLoading(false);
+      const res = await axios.get(`${API_BASE}/api/books/${id}`);
+      setBook(res.data); setLoading(false);
     } catch (err) {
-      setError('Book not found');
-      setLoading(false);
+      setError('Book not found'); setLoading(false);
     }
   };
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/reviews/${id}`);
+      const res = await axios.get(`${API_BASE}/api/reviews/${id}`);
       setReviews(res.data);
     } catch (err) {
       console.error('Error fetching reviews:', err);
     }
   };
 
-  // ADD Review
   const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+    e.preventDefault(); setError(''); setSuccess('');
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        `http://localhost:5000/api/reviews/${id}`,
+        `${API_BASE}/api/reviews/${id}`,
         { rating: reviewForm.rating, reviewText: reviewForm.reviewText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -59,11 +55,10 @@ function BookDetail() {
     }
   };
 
-  // DELETE Review
   const handleDeleteReview = async (reviewId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/reviews/${reviewId}`, {
+      await axios.delete(`${API_BASE}/api/reviews/${reviewId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setReviews(prev => prev.filter(r => r._id !== reviewId));
@@ -73,21 +68,18 @@ function BookDetail() {
     }
   };
 
-  // EDIT Review - Populate edit form
   const handleEditInit = (review) => {
     setEditReviewId(review._id);
     setEditForm({ rating: review.rating, reviewText: review.reviewText });
-    setSuccess('');
-    setError('');
+    setSuccess(''); setError('');
   };
 
-  // EDIT Review - Send update
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       const res = await axios.put(
-        `http://localhost:5000/api/reviews/${editReviewId}`,
+        `${API_BASE}/api/reviews/${editReviewId}`,
         { rating: editForm.rating, reviewText: editForm.reviewText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -108,9 +100,7 @@ function BookDetail() {
 
   return (
     <div style={{maxWidth:800, margin:'40px auto', padding:20}}>
-      <Link to="/books" style={{color:'#007', textDecoration:'none', marginBottom:20, display:'inline-block'}}>
-        ← Back to Books
-      </Link>
+      <Link to="/books" style={{color:'#007', textDecoration:'none', marginBottom:20, display:'inline-block'}}>← Back to Books</Link>
       {book && (
         <div style={{marginBottom:40}}>
           <h1>{book.title}</h1>
@@ -134,11 +124,7 @@ function BookDetail() {
         <form onSubmit={handleReviewSubmit} style={{display:'flex', flexDirection:'column', gap:15}}>
           <div>
             <label>Rating: </label>
-            <select 
-              value={reviewForm.rating} 
-              onChange={e => setReviewForm({...reviewForm, rating: parseInt(e.target.value)})}
-              style={{marginLeft:10, padding:5}}
-            >
+            <select value={reviewForm.rating} onChange={e => setReviewForm({...reviewForm, rating: parseInt(e.target.value)})} style={{marginLeft:10, padding:5}}>
               <option value={5}>⭐⭐⭐⭐⭐ (5)</option>
               <option value={4}>⭐⭐⭐⭐ (4)</option>
               <option value={3}>⭐⭐⭐ (3)</option>

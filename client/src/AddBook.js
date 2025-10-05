@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+const API_BASE = 'https://bookreviewplatform-3-5ccu.onrender.com';
+
 function AddBook({ onAdd }) {
   const [form, setForm] = useState({
     title: '',
@@ -21,7 +23,7 @@ function AddBook({ onAdd }) {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://localhost:5000/api/books',
+        `${API_BASE}/api/books`,
         {
           ...form,
           year: parseInt(form.year)
