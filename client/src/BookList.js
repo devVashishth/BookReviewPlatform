@@ -18,6 +18,21 @@ function BookList() {
     setBooks(prev => [...prev, newBook]);
   };
 
+  // -->> यह नया function add करो
+  const handleDelete = async (bookId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_BASE}/api/books/${bookId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setBooks(prev => prev.filter(b => b._id !== bookId));
+    } catch (err) {
+      alert(err.response?.data?.error || "Delete failed");
+    }
+  };
+
   return (
     <div style={{maxWidth:900, margin:"40px auto"}}>
       <h2 style={{textAlign:"center"}}>Book List</h2>
@@ -32,10 +47,25 @@ function BookList() {
             <p><b>Author:</b> {book.author}</p>
             <p><b>Genre:</b> {book.genre}</p>
             <Link to={`/books/${book._id}`}>View Details</Link>
+            {/* === Delete Button यहाँ Add करो === */}
+            <button
+              style={{
+                marginTop: 12,
+                background: 'red',
+                color: 'white',
+                border: 'none',
+                borderRadius: 5,
+                padding: '6px 14px',
+                cursor: 'pointer',
+                marginLeft: 10,
+              }}
+              onClick={() => handleDelete(book._id)}
+            >Delete</button>
           </div>
         ))}
       </div>
     </div>
   );
 }
+
 export default BookList;
